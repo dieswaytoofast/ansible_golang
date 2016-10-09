@@ -1,0 +1,58 @@
+---
+
+- name: Get the current go version
+  command: "{{ golang_dest }}/go/bin/go version"
+  ignore_errors: yes
+  register: golang_temp_version_and_target
+  changed_when: false
+
+- name: set golang_current_version_and_target to undefined if it is undefined
+  set_fact:
+    golang_current_version_and_target: "undefined"
+  when: golang_temp_version_and_target|failed
+
+- name: set golang_current_version_and_target to the actual value if it is defined
+  set_fact:
+    golang_current_version_and_target: "{{ golang_temp_version_and_target.stdout }}"
+  when: golang_temp_version_and_target.stdout is defined
+
+- name: Remove old version of go if we can't get the version. It is busted
+  file:
+    path: "{{ golang_dest }}/go"
+    state: absent
+  when: golang_current_version_and_target != golang_version_and_target
+
+
+- name: Download the go distro
+  get_url:
+    url: "{{ golang_download_base_url }}/{{ golang_tar_name }}"
+    dest: "{{ golang_dest }}/src/{{ golang_tar_name }}"
+    checksum: "{{ golang_tar_checksum }}"
+  when: golang_current_version_and_target != golang_version_and_target
+
+- name: Remove old version of go if the version is wrong.
+  file:
+    path: "{{ golang_dest }}/go"
+    state: absent
+  when: golang_current_version_and_target != golang_version_and_target
+
+- name: Install go if necessary
+  unarchive:
+    src: "{{ golang_dest }}/src/{{ golang_tar_name }}"
+    dest: "{{ golang_dest }}"
+    copy: no
+  when: golang_current_version_and_target != golang_version_and_target
+
+- name: Setup paths for users
+#  copy:
+#    src: go_vars.sh
+#    dest: /etc/profile.d
+  template:
+    src: files/go_vars.sh.j2
+    dest: /etc/profile.d/go_vars.sh
+
+
+- name: Remove downloaded tar
+  file:
+    path: "{{ golang_dest }}/src/{{ golang_tar_name }}"
+    state: absent

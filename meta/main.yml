@@ -1,0 +1,31 @@
+---
+
+galaxy_info:
+  author: "Mahesh Paolini-Subramanya"
+  description: "Ansible role that installs Docker on Ubuntu"
+  license: MIT
+  min_ansible_version: 2.0
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: FreeBSD
+      versions:
+        - all
+    - name: GenericBSD
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  categories:
+    - development
+  galaxy_tags:
+  - golang
+  - go
+  - development
+  - software
+dependencies: []
