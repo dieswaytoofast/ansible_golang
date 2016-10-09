@@ -15,6 +15,7 @@ Role Variables
 * `golang_tar_checksum`: Checksum for the above tar from the [Download Page](https://golang.org/dl/)
 * `golang_version_and_target`: Basically what `go version` returns (e.g. `go version go1.6.1 darwin/amd64`)
 * `golang_download_base_url`: The base URL that you get the download from - probably not something you need to touch
+* `golang_install_glide` : Install [Glide](https://glide.sh) if defined
 
 
 Dependencies
