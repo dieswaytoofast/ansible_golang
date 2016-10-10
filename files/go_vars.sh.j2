@@ -1,4 +1,4 @@
 # This needs to get templated
-export GOPATH=$HOME/go
+export GOPATH={{ ansible_golang_gopath }}
 export PATH=$PATH:$GOPATH/bin
-export PATH=$PATH:{{ golang_dest }}/go/bin
+export PATH=$PATH:{{ ansible_golang_dest }}/go/bin

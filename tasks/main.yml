@@ -4,59 +4,59 @@
 - name: Get the current go version
   become: yes
   become_method: sudo
-  command: "{{ golang_dest }}/go/bin/go version"
+  command: "{{ ansible_golang_dest }}/go/bin/go version"
   ignore_errors: yes
-  register: golang_temp_version_and_target
+  register: ansible_golang_temp_version_and_target
   changed_when: false
 
-- name: set golang_current_version_and_target to undefined if it is undefined
+- name: set ansible_golang_current_version_and_target to undefined if it is undefined
   become: yes
   become_method: sudo
   set_fact:
-    golang_current_version_and_target: "undefined"
-  when: golang_temp_version_and_target|failed
+    ansible_golang_current_version_and_target: "undefined"
+  when: ansible_golang_temp_version_and_target|failed
 
-- name: set golang_current_version_and_target to the actual value if it is defined
+- name: set ansible_golang_current_version_and_target to the actual value if it is defined
   become: yes
   become_method: sudo
   set_fact:
-    golang_current_version_and_target: "{{ golang_temp_version_and_target.stdout }}"
-  when: golang_temp_version_and_target.stdout is defined
+    ansible_golang_current_version_and_target: "{{ ansible_golang_temp_version_and_target.stdout }}"
+  when: ansible_golang_temp_version_and_target.stdout is defined
 
 - name: Remove old version of go if we can't get the version. It is busted
   become: yes
   become_method: sudo
   file:
-    path: "{{ golang_dest }}/go"
+    path: "{{ ansible_golang_dest }}/go"
     state: absent
-  when: golang_current_version_and_target != golang_version_and_target
+  when: ansible_golang_current_version_and_target != ansible_golang_version_and_target
 
 
 - name: Download the go distro
   become: yes
   become_method: sudo
   get_url:
-    url: "{{ golang_download_base_url }}/{{ golang_tar_name }}"
-    dest: "{{ golang_dest }}/src/{{ golang_tar_name }}"
-    checksum: "{{ golang_tar_checksum }}"
-  when: golang_current_version_and_target != golang_version_and_target
+    url: "{{ ansible_golang_download_base_url }}/{{ ansible_golang_tar_name }}"
+    dest: "{{ ansible_golang_dest }}/src/{{ ansible_golang_tar_name }}"
+    checksum: "{{ ansible_golang_tar_checksum }}"
+  when: ansible_golang_current_version_and_target != ansible_golang_version_and_target
 
 - name: Remove old version of go if the version is wrong.
   become: yes
   become_method: sudo
   file:
-    path: "{{ golang_dest }}/go"
+    path: "{{ ansible_golang_dest }}/go"
     state: absent
-  when: golang_current_version_and_target != golang_version_and_target
+  when: ansible_golang_current_version_and_target != ansible_golang_version_and_target
 
 - name: Install go if necessary
   become: yes
   become_method: sudo
   unarchive:
-    src: "{{ golang_dest }}/src/{{ golang_tar_name }}"
-    dest: "{{ golang_dest }}"
+    src: "{{ ansible_golang_dest }}/src/{{ ansible_golang_tar_name }}"
+    dest: "{{ ansible_golang_dest }}"
     copy: no
-  when: golang_current_version_and_target != golang_version_and_target
+  when: ansible_golang_current_version_and_target != ansible_golang_version_and_target
 
 - name: Setup paths for users
   become: yes
@@ -69,39 +69,39 @@
   become: yes
   become_method: sudo
   file:
-    path: "{{ golang_dest }}/src/{{ golang_tar_name }}"
+    path: "{{ ansible_golang_dest }}/src/{{ ansible_golang_tar_name }}"
     state: absent
 
 ## Glide
 - name: Ensure that target dir exists
   file:
-    path: "{{ ansible_user_dir }}/go/bin"
+    path: "{{ ansible_golang_gopath }}/bin"
     state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
+    owner: "{{ ansible_golang_user }}"
+    group: "{{ ansible_golang_group }}"
 
 - name: Download glide if requested
   become: yes
   become_method: sudo
   get_url:
-    url: "{{ glide_download_base_url }}/{{ glide_sh_name }}"
-    dest: "{{ golang_dest }}/src/{{ glide_sh_name }}"
-  when: golang_install_glide is defined
+    url: "{{ ansible_golang_glide_download_base_url }}/{{ ansible_golang_glide_sh_name }}"
+    dest: "{{ ansible_golang_dest }}/src/{{ ansible_golang_glide_sh_name }}"
+  when: ansible_golang_install_glide is defined
 
 - name: Set perms on glide get script
   become: yes
   become_method: sudo
   file:
-    path: "{{ golang_dest }}/src/{{ glide_sh_name }}"
+    path: "{{ ansible_golang_dest }}/src/{{ ansible_golang_glide_sh_name }}"
     mode: 0755
 
 - name: Install glide if requested
-  shell: "{{ golang_dest }}/src/{{ glide_sh_name }}"
-  when: golang_install_glide is defined
+  shell: "{{ ansible_golang_dest }}/src/{{ ansible_golang_glide_sh_name }}"
+  when: ansible_golang_install_glide is defined
 
 - name: Remove downloaded script
   become: yes
   become_method: sudo
   file:
-    path: "{{ golang_dest }}/src/{{ glide_sh_name }}"
+    path: "{{ ansible_golang_dest }}/src/{{ ansible_golang_glide_sh_name }}"
     state: absent
