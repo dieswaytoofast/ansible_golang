@@ -65,7 +65,7 @@
     src: files/go_vars.sh.j2
     dest: /etc/profile.d/go_vars.sh
 
-- name: Remove downloaded tar
+- name: Remove downloaded tar "{{ ansible_golang_dest }}/src/{{ ansible_golang_tar_name }}"
   become: yes
   become_method: sudo
   file:
@@ -73,7 +73,7 @@
     state: absent
 
 ## Glide
-- name: Ensure that target dir exists
+- name: Ensure that {{ ansible_golang_gopath }}/bin exists
   file:
     path: "{{ ansible_golang_gopath }}/bin"
     state: directory
