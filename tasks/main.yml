@@ -96,7 +96,7 @@
     mode: 0755
 
 - name: Install glide if requested
-  shell: "{{ ansible_golang_dest }}/src/{{ ansible_golang_glide_sh_name }}"
+  shell: ". /etc/profile.d/go_vars.sh && {{ ansible_golang_dest }}/src/{{ ansible_golang_glide_sh_name }}"
   when: ansible_golang_install_glide is defined
 
 - name: Remove downloaded script
