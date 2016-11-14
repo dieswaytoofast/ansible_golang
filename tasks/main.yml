@@ -62,7 +62,7 @@
   become: yes
   become_method: sudo
   template:
-    src: files/go_vars.sh.j2
+    src: go_vars.sh.j2
     dest: /etc/profile.d/go_vars.sh
 
 - name: Remove downloaded tar "{{ ansible_golang_dest }}/src/{{ ansible_golang_tar_name }}"
