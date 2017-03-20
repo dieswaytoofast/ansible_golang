@@ -79,6 +79,7 @@
     state: directory
     owner: "{{ ansible_golang_user }}"
     group: "{{ ansible_golang_group }}"
+  when: ansible_golang_install_glide | bool
 
 - name: Download glide if requested
   become: yes
@@ -86,7 +87,7 @@
   get_url:
     url: "{{ ansible_golang_glide_download_base_url }}/{{ ansible_golang_glide_sh_name }}"
     dest: "{{ ansible_golang_dest }}/src/{{ ansible_golang_glide_sh_name }}"
-  when: ansible_golang_install_glide is defined
+  when: ansible_golang_install_glide | bool
 
 - name: Set perms on glide get script
   become: yes
@@ -94,10 +95,11 @@
   file:
     path: "{{ ansible_golang_dest }}/src/{{ ansible_golang_glide_sh_name }}"
     mode: 0755
+  when: ansible_golang_install_glide | bool
 
 - name: Install glide if requested
   shell: ". /etc/profile.d/go_vars.sh && {{ ansible_golang_dest }}/src/{{ ansible_golang_glide_sh_name }}"
-  when: ansible_golang_install_glide is defined
+  when: ansible_golang_install_glide | bool
 
 - name: Remove downloaded script
   become: yes
@@ -105,3 +107,4 @@
   file:
     path: "{{ ansible_golang_dest }}/src/{{ ansible_golang_glide_sh_name }}"
     state: absent
+  when: ansible_golang_install_glide | bool
